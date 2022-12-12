@@ -1,14 +1,14 @@
 package actors;
 
 import messages.*;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class ActorProxy {
+public class ActorProxy extends Actor{
 
 	//attributes
 	private Actor actor;
-	private Queue<Message> messageQueue;
+	private BlockingQueue<Message> messageQueue;
 
 	/**
 	 * Constructor for the ActorProxy
@@ -16,24 +16,27 @@ public class ActorProxy {
 	 */
 	public ActorProxy(Actor actor){
 		this.actor=actor;
-		messageQueue = new LinkedList<>();
+		messageQueue = new LinkedBlockingQueue<>();
 	}
 
 
 	/**
 	 * Send method.  Adds a message to the actor queue.
-	 * @param missatge message to the actor.
+	 * @param message message to the actor.
 	 */
-	public void send(Message missatge) {
-        actor.send(missatge);
+	public void send(Message message) {
+		if (message.getFrom() == null){
+			message.setFrom(this);
+		}
+        actor.send(message);
 	}
 
 	/**
 	 * Receive method.  Gets the first message from the proxy's queue.
 	 * @return the message received by the proxy
 	 */
-	public Message receive(){
-		return messageQueue.poll();
+	public void sendResponse(Message message){
+		this.messageQueue.add(message);
 	}
 
 	/**
@@ -41,6 +44,14 @@ public class ActorProxy {
 	 * @param message message to be sent to the proxy
 	 */
 	public void onMessageReceived(Message message){
-		messageQueue.add(message);
+
+	}
+
+	/**
+	 * Method to get the messages sent to the proxy
+	 * @return message
+	 */
+	public Message receive() throws InterruptedException {
+		return messageQueue.take();
 	}
 }

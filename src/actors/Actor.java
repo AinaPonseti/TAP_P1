@@ -4,17 +4,19 @@ import messages.QuitMessage;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class Actor {
 
     //queue that contains all the messages sent to the actor
-    private Queue<Message> messageQueue;
+    private BlockingQueue<Message> messageQueue;
 
     /**
      * Constructor for the Actor class, initializes the messageQueue
      */
     public Actor() {
-        messageQueue = new LinkedList<>();
+        messageQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -32,13 +34,16 @@ public abstract class Actor {
         boolean running = true;
 
         while (running) {
-            Message message = messageQueue.poll();
-            if (message != null) {
+            try {
+                Message message = messageQueue.take();
                 if (message instanceof QuitMessage) {
                     running = false;
                 } else {
                     onMessageReceived(message);
                 }
+            }
+            catch (InterruptedException e){
+                running = false;
             }
         }
     }

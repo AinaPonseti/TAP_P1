@@ -17,6 +17,23 @@ public class Message {
     }
 
     /**
+     * Constructor for the Message class
+     * @param proxy actor that sends the message
+     */
+    public Message(Actor proxy){
+        this.from = null;
+        this.text = null;
+    }
+
+    /**
+     * Default Constructor for the Message class
+     */
+    public Message(){
+        this.from = null;
+        this.text = null;
+    }
+
+    /**
      * Getter for the actor that sends the message
      * @return the actor that sent the message
      */
@@ -31,6 +48,14 @@ public class Message {
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Setter for the sender
+     * @param from actor that sends the message
+     */
+    public void setFrom(Actor from) {
+        this.from = from;
     }
 }
 

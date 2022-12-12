@@ -2,12 +2,11 @@ package messages;
 
 import actors.Actor;
 
-public class QuitMessage extends Message{
-
+public class GetInsultMessage extends Message{
     /**
      * Constructor for the Message class.
      */
-    public QuitMessage() {
-        super(null, null);
+    public GetInsultMessage() {
+        super();
     }
 }
