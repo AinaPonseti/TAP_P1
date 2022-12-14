@@ -34,12 +34,11 @@ public class ActorContext{
 
 	/**
 	 * Method to spawn actors
-	 * @param name name of the actor
 	 * @param actor actor to be spawned
 	 * @return the actor
 	 */
-	public static Actor spawnActor(String name, Actor actor){
-		actorRegistry.put(name, actor);
+	public static Actor spawnActor(Actor actor){
+		actorRegistry.put(actor.getName(), actor);
 		Thread thread = new Thread(actor::process);
 		thread.setName(actor.getClass().toString());
 		thread.start();

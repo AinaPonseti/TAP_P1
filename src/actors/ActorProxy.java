@@ -15,6 +15,7 @@ public class ActorProxy extends Actor{
 	 * @param actor actor
 	 */
 	public ActorProxy(Actor actor){
+		super(actor.getName());
 		this.actor=actor;
 		messageQueue = new LinkedBlockingQueue<>();
 	}

@@ -11,12 +11,14 @@ public abstract class Actor {
 
     //queue that contains all the messages sent to the actor
     private BlockingQueue<Message> messageQueue;
+    private String name;
 
     /**
      * Constructor for the Actor class, initializes the messageQueue
      */
-    public Actor() {
+    public Actor(String name) {
         messageQueue = new LinkedBlockingQueue<>();
+        this.name = name;
     }
 
     /**
@@ -55,5 +57,12 @@ public abstract class Actor {
      */
     public abstract void onMessageReceived(Message message);
 
+    /**
+     * Getter for the actor name
+     * @return string (name of the actor)
+     */
+    public String getName(){
+        return name;
+    }
 }
 

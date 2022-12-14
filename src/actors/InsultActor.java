@@ -10,6 +10,16 @@ import java.util.*;
 public class InsultActor extends Actor {
 
     private List<String> insults = new ArrayList<>();
+
+    /**
+     * Constructor for the Actor class, initializes the messageQueue
+     *
+     * @param name
+     */
+    public InsultActor(String name) {
+        super(name);
+    }
+
     @Override
     public void onMessageReceived(Message message) {
         if (message instanceof AddInsultMessage){

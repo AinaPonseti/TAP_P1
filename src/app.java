@@ -1,6 +1,8 @@
 import actors.ActorContext;
 import actors.HelloWorldActor;
 import actors.InsultActor;
+import decorators.ActorDecorator;
+import decorators.FirewallDecorator;
 import messages.AddInsultMessage;
 import messages.GetInsultMessage;
 import messages.Message;
@@ -14,14 +16,13 @@ public class app {
 
 		//actor system demonstration
 		System.out.println(" ------------------- HEllO WORLD -------------------");
-		ActorProxy helloActor = new ActorProxy(ActorContext.spawnActor("hello", new HelloWorldActor()));
+		ActorProxy helloActor = new ActorProxy(ActorContext.spawnActor(new HelloWorldActor("hello")));
 		System.out.println("Sending 4 concurrent Hello World messages...");
 		helloActor.send(new Message(null, "Hello from the HelloWorldActor!"));
 		helloActor.send(new Message(null, "Hello from the HelloWorldActor!"));
 		helloActor.send(new Message(null, "Hello from the HelloWorldActor!"));
 		helloActor.send(new Message(null, "Hello from the HelloWorldActor!"));
 		System.out.println("Done.\n");
-		helloActor.send(new QuitMessage());
 
 		System.out.println("Waiting for the messages to arrive...");
 		try {
@@ -34,7 +35,7 @@ public class app {
 
 		//actor proxy demonstration
 		System.out.println(" ------------------- INSULTS -------------------");
-		ActorProxy insult = new ActorProxy(ActorContext.spawnActor("insultActor", new InsultActor()));
+		ActorProxy insult = new ActorProxy(ActorContext.spawnActor(new InsultActor("insultActor")));
 
 		System.out.println("Adding insults...");
 		insult.send(new AddInsultMessage(null, "stupid"));
@@ -66,6 +67,29 @@ public class app {
 			System.out.println(e);
 		}
 		System.out.println("Done.");
+
+
+		//decorators demonstration
+		System.out.println(" ------------------- DECORATORS -------------------");
+		System.out.println("Creating a Firewall decorator for the helloWorldActor...");
+		FirewallDecorator firewallDecorator = new FirewallDecorator(ActorContext.lookup("hello"));
+		System.out.println("Done.\n");
+
+		System.out.println("Sending message frrom different senders...");
+		firewallDecorator.send(new Message(ActorContext.lookup("insultActor"), "Hello from the insultActor!"));
+		firewallDecorator.send(new Message(null, "Hello from null!"));
+		firewallDecorator.send(new Message(insult, "Hello from the proxy for the insultActor!"));
+
+		System.out.println("Waiting for the messages to arrive...");
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e){
+			System.out.println(e);
+		}
+		System.out.println("Done.\n");
+
 		insult.send(new QuitMessage());
+		helloActor.send(new QuitMessage());
 	}
 }
