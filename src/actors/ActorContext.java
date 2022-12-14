@@ -40,7 +40,7 @@ public class ActorContext{
 	public static Actor spawnActor(Actor actor){
 		actorRegistry.put(actor.getName(), actor);
 		Thread thread = new Thread(actor::process);
-		thread.setName(actor.getClass().toString());
+		thread.setName(actor.getName());
 		thread.start();
 		return actor;
 	}

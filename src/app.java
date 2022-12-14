@@ -2,11 +2,22 @@ import actors.ActorContext;
 import actors.HelloWorldActor;
 import actors.InsultActor;
 import decorators.ActorDecorator;
+import decorators.EncryptionDecorator;
 import decorators.FirewallDecorator;
 import decorators.LambdaFirewallDecorator;
 import messages.*;
 import actors.ActorProxy;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.spec.KeySpec;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -110,5 +121,23 @@ public class app {
 
 		insult.send(new QuitMessage());
 		helloActor.send(new QuitMessage());
+
+		System.out.println("Creating an EncryptionDecorator for a helloWorldActor...");
+		ActorProxy helloActor1 = new ActorProxy(ActorContext.spawnActor(new EncryptionDecorator(new HelloWorldActor("helloActor1"))));
+		ActorProxy helloActor2 = new ActorProxy(ActorContext.spawnActor(new HelloWorldActor("helloActor2")));
+		System.out.println("Sending HelloWorld message...");
+		helloActor1.send(new Message(helloActor2, "Hello World"));
+
+		System.out.println("Waiting for the messages to arrive...");
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e){
+			System.out.println(e);
+		}
+		System.out.println("Done.\n");
+
+		helloActor1.send(new QuitMessage());
+		helloActor2.send(new QuitMessage());
 	}
 }

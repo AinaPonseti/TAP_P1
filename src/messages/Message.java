@@ -67,5 +67,9 @@ public class Message {
     public void setFrom(Actor from) {
         this.from = from;
     }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }
 

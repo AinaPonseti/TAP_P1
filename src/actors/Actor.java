@@ -2,8 +2,6 @@ package actors;
 import messages.Message;
 import messages.QuitMessage;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
