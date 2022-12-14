@@ -3,11 +3,12 @@ import actors.HelloWorldActor;
 import actors.InsultActor;
 import decorators.ActorDecorator;
 import decorators.FirewallDecorator;
-import messages.AddInsultMessage;
-import messages.GetInsultMessage;
-import messages.Message;
+import decorators.LambdaFirewallDecorator;
+import messages.*;
 import actors.ActorProxy;
-import messages.QuitMessage;
+
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class app {
 	public static void main(String[] args) {
@@ -75,7 +76,7 @@ public class app {
 		FirewallDecorator firewallDecorator = new FirewallDecorator(ActorContext.lookup("hello"));
 		System.out.println("Done.\n");
 
-		System.out.println("Sending message frrom different senders...");
+		System.out.println("Sending message from different senders...");
 		firewallDecorator.send(new Message(ActorContext.lookup("insultActor"), "Hello from the insultActor!"));
 		firewallDecorator.send(new Message(null, "Hello from null!"));
 		firewallDecorator.send(new Message(insult, "Hello from the proxy for the insultActor!"));
@@ -83,6 +84,24 @@ public class app {
 		System.out.println("Waiting for the messages to arrive...");
 		try {
 			Thread.sleep(100);
+		}
+		catch (InterruptedException e){
+			System.out.println(e);
+		}
+		System.out.println("Done.\n");
+
+		System.out.println("Creating a LambdaFirewallDecorator for the insultActor...");
+		LambdaFirewallDecorator lambdaFirewallDecorator = new LambdaFirewallDecorator(ActorContext.lookup("insultActor"));
+		System.out.println("Done.\n");
+
+		Predicate<Message> lambda = message -> GetAllInsultsMessage.class.isInstance(message);
+		lambdaFirewallDecorator.send(new AddClosureMessage(ActorContext.lookup("hello"), lambda));
+		lambdaFirewallDecorator.send(new AddInsultMessage(ActorContext.lookup("hello"),"new insult"));
+		lambdaFirewallDecorator.send(new GetAllInsultsMessage(ActorContext.lookup("hello")));
+
+		System.out.println("Waiting for the messages to arrive...");
+		try {
+			Thread.sleep(500);
 		}
 		catch (InterruptedException e){
 			System.out.println(e);
