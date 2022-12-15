@@ -1,5 +1,7 @@
 package observer;
 
+import actors.Actor;
+import actors.ActorContext;
 import messages.Message;
 
 import java.util.ArrayList;
@@ -26,8 +28,16 @@ public class MonitorService {
     /**
      * Monitors all Actors aviables
      */
-    public void monitorAllActors(ActorObserver... actor){
-        //TODO
+    public void monitorAllActors(){
+        Map<String, ActorObserver> map = ActorContext.getRegistry();
+        for(var entry : map.entrySet()){
+            if(entry.getValue() instanceof ActorObserver){
+                entry.getValue().monitor.subscribe(new MessagesListener());
+                entry.getValue().monitor.subscribe(new TrafficListener());
+                entry.getValue().monitor.subscribe(new EventsListener());
+                listeners.put(entry.getValue(), entry.getValue().monitor.getObservers());
+            }
+        }
     }
 
     /**

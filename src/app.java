@@ -68,10 +68,12 @@ public class app {
 		ActorObserver actor = new ActorObserver();
 		ActorObserver actor2 = new ActorObserver();
 		MonitorService monitor = new MonitorService();
-		monitor.monitorActor(actor);
-		monitor.monitorActor(actor2);
+		//monitor.monitorActor(actor);
+		//monitor.monitorActor(actor2);
 		ActorContext.spawnActor("hello", actor);
 		ActorContext.spawnActor("godbye", actor2);
+		monitor.monitorAllActors();
+
 		for (int i = 0; i < 10; i++) {
 			actor.send(new Message(null, "Hello from the HelloWorldActor!"));
 			actor2.send(new Message(null, "godbye from the HelloWorldActor!"));
@@ -103,7 +105,7 @@ public class app {
 			System.out.println("----------- Recived Messages: -----------");
 		}
 		for (var entry : map.entrySet()) {
-			System.out.println("Key: " + entry.getKey());
+			System.out.println("Actor: " + getActorName(entry.getKey()));
 			System.out.println("Messages: ");
 			for (var mes : entry.getValue()) {
 				System.out.println("" + mes.getText());
@@ -111,6 +113,16 @@ public class app {
 			}
 		}
 	}
+	private static String getActorName(Actor actor){
+		Map<String, ActorObserver> map = ActorContext.getRegistry();
+		for( var entry : map.entrySet()){
+			if(entry.getValue().equals(actor)){
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
 	private static void printEvents(MonitorService monitor) {
 		Map<String, List<String>> map;
 		map = monitor.getEvents();
@@ -130,11 +142,12 @@ public class app {
 		map = monitor.getTraffic();
 		System.out.println("----------- Events: -----------");
 		for (var entry : map.entrySet()) {
-			System.out.print("Traffic " + entry.getKey());
-			System.out.println(" actors: ");
+			System.out.print("--- " + entry.getKey()+ " Traffic ---\n");
+			System.out.print("Actors:");
 			for (var mes : entry.getValue()) {
-				System.out.print(", " + mes);
+				System.out.print(" " + getActorName(mes));
 			}
+			System.out.print("\n");
 		}
 	}
 
