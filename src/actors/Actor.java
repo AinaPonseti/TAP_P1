@@ -1,9 +1,8 @@
 package actors;
 import messages.Message;
 import messages.QuitMessage;
+import observer.Subject;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -12,11 +11,14 @@ public abstract class Actor {
     //queue that contains all the messages sent to the actor
     private BlockingQueue<Message> messageQueue;
 
+    public Subject monitor;
     /**
      * Constructor for the Actor class, initializes the messageQueue
      */
     public Actor() {
         messageQueue = new LinkedBlockingQueue<>();
+        this.monitor = new Subject();
+        monitor.notify(1, null);
     }
 
     /**
@@ -24,6 +26,7 @@ public abstract class Actor {
      * @param message message to be added
      */
     public void send(Message message){
+        monitor.notify(3, message);
         messageQueue.add(message);
     }
 
@@ -38,14 +41,18 @@ public abstract class Actor {
                 Message message = messageQueue.take();
                 if (message instanceof QuitMessage) {
                     running = false;
+                    monitor.notify(0, null);
                 } else {
+                    monitor.notify(2, message);
                     onMessageReceived(message);
                 }
             }
             catch (InterruptedException e){
                 running = false;
+                monitor.notify(-1, null);
             }
         }
+
     }
 
     /**
