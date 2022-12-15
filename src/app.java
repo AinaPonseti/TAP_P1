@@ -5,6 +5,8 @@ import observer.*;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Thread.sleep;
+
 public class app {
 	public static void main(String[] args) {
 
@@ -23,7 +25,7 @@ public class app {
 
 		System.out.println("Waiting for the messages to arrive...");
 		try {
-			Thread.sleep(500);
+			sleep(500);
 		} catch (InterruptedException e) {
 			System.out.println(e);
 		}
@@ -61,30 +63,42 @@ public class app {
 		} catch (InterruptedException e) {
 			System.out.println(e);
 		}
-		System.out.println("Done.");
+		System.out.println("Done. \n");
 		insult.send(new QuitMessage());
 
+
 		// actor observer Pattern
-		ActorObserver actor = new ActorObserver();
-		ActorObserver actor2 = new ActorObserver();
+		System.out.println(" ------------------- OBSERVER -------------------");
+		Actor actor = new HelloWorldActor();
+		Actor actor2 = new HelloWorldActor();
 		MonitorService monitor = new MonitorService();
 		//monitor.monitorActor(actor);
 		//monitor.monitorActor(actor2);
+
+
 		ActorContext.spawnActor("hello", actor);
 		ActorContext.spawnActor("godbye", actor2);
 		monitor.monitorAllActors();
 
+		System.out.println("Adding messages...");
 		for (int i = 0; i < 10; i++) {
 			actor.send(new Message(null, "Hello from the HelloWorldActor!"));
 			actor2.send(new Message(null, "godbye from the HelloWorldActor!"));
 		}
+		System.out.println("Done.\n");
 		actor.send(new QuitMessage());
 		actor2.send(new QuitMessage());
 
+		try {
+			sleep(100);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 		printMessages(monitor, 0);
 		printMessages(monitor, 1);
 		printEvents(monitor);
 		printTraffic(monitor);
+		printNumberofMessages(monitor,actor,actor2);
 
 
 	}
@@ -96,7 +110,7 @@ public class app {
 	 * @param version 0 -> sended messages, 1 -> recived messages, 2 -> events preformed
 	 */
 	private static void printMessages(MonitorService monitor, int version) {
-		Map<ActorObserver, List<Message>> map;
+		Map<Actor, List<Message>> map;
 		if (version == 0) {
 			map = monitor.getSentMessages();
 			System.out.println("----------- Sent Messages: -----------");
@@ -113,8 +127,8 @@ public class app {
 			}
 		}
 	}
-	private static String getActorName(Actor actor){
-		Map<String, ActorObserver> map = ActorContext.getRegistry();
+	private static String getActorName(actors.Actor actor){
+		Map<String, Actor> map = ActorContext.getRegistry();
 		for( var entry : map.entrySet()){
 			if(entry.getValue().equals(actor)){
 				return entry.getKey();
@@ -136,9 +150,23 @@ public class app {
 			}
 		}
 	}
+	private static void printNumberofMessages(MonitorService monitor,Actor actor, Actor actor2) {
+		Map<String, List<Actor>> map;
+		map = monitor.getNumberofMessages(actor, actor2);
+		System.out.println("----------- Events: -----------");
+		for (var entry : map.entrySet()) {
+			System.out.println("event : " + entry.getKey());
+			System.out.println("Actors: ");
+			for (var mes : entry.getValue()) {
+				System.out.println("" + getActorName(mes));
+
+			}
+		}
+	}
+
 
 	private static void printTraffic(MonitorService monitor) {
-		Map<String, List<ActorObserver>> map;
+		Map<String, List<Actor>> map;
 		map = monitor.getTraffic();
 		System.out.println("----------- Events: -----------");
 		for (var entry : map.entrySet()) {
