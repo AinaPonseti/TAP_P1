@@ -4,25 +4,15 @@ import actors.Actor;
 import messages.Message;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESedeKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.security.spec.KeySpec;
+import java.util.Base64;
 
 public class EncryptionDecorator extends ActorDecorator {
 
-    //Constants
-    private static final Charset FORMAT = StandardCharsets.UTF_8;
-    private static String encryptionKey = "ThisIsSpartaThisIsSparta";
-    private static String encryptionScheme = "DESede";
-
     //attributes
-    private KeySpec ks;
-    private SecretKeyFactory skf;
+    KeyGenerator kg;
     private Cipher cipher;
     private SecretKey key;
 
@@ -30,10 +20,10 @@ public class EncryptionDecorator extends ActorDecorator {
     public EncryptionDecorator(Actor actor) {
         super(actor);
         try {
-            ks = new DESedeKeySpec(encryptionKey.getBytes(StandardCharsets.UTF_8));
-            skf = SecretKeyFactory.getInstance(encryptionScheme);
-            cipher = Cipher.getInstance(encryptionScheme);
-            key = skf.generateSecret(ks);
+            kg = KeyGenerator.getInstance("AES");
+            kg.init(128);
+            key = kg.generateKey();
+            cipher = Cipher.getInstance("AES");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -41,8 +31,10 @@ public class EncryptionDecorator extends ActorDecorator {
 
     @Override
     public void send(Message message) {
-        encryptMessage(message);
-        decoratedActor.send(message);
+        if (message.getText() != null){
+            System.out.println("Message encrypted successfully");
+        }
+        messageQueue.add(message);
     }
 
     /**
@@ -53,7 +45,8 @@ public class EncryptionDecorator extends ActorDecorator {
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] encryptedMessage = cipher.doFinal(message.getText().getBytes(StandardCharsets.UTF_8));
-            message.setText(new String(encryptedMessage));
+            Base64.Encoder encoder = Base64.getEncoder();
+            message.setText(encoder.encodeToString(encryptedMessage));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,13 +60,15 @@ public class EncryptionDecorator extends ActorDecorator {
     }
 
     /**
-     * Method to decrupt a message
+     * Method to decrypt a message
      * @param message message to decrypt
      */
     private void decryptMessage(Message message){
         try {
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] encryptedMessage = decoder.decode(message.getText());
             cipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] decryptedMessage = cipher.doFinal(message.getText().getBytes());
+            byte[] decryptedMessage = cipher.doFinal(encryptedMessage);
             message.setText(new String(decryptedMessage));
 
         } catch (Exception e) {

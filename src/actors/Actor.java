@@ -8,8 +8,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class Actor {
 
     //queue that contains all the messages sent to the actor
-    private BlockingQueue<Message> messageQueue;
-    private String name;
+    protected BlockingQueue<Message> messageQueue;
+    protected String name;
 
     /**
      * Constructor for the Actor class, initializes the messageQueue

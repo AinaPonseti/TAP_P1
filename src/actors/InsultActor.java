@@ -13,8 +13,7 @@ public class InsultActor extends Actor {
 
     /**
      * Constructor for the Actor class, initializes the messageQueue
-     *
-     * @param name
+     * @param name name of the actor
      */
     public InsultActor(String name) {
         super(name);

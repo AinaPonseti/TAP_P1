@@ -15,8 +15,8 @@ public class FirewallDecorator extends ActorDecorator {
 
     @Override
     public void send(Message message) {
-        if (checkIfValid(message)) {
-            decoratedActor.send(message);
+        if (checkIfValid(message) || message instanceof QuitMessage) {
+            messageQueue.add(message);
         }
     }
 
@@ -28,18 +28,12 @@ public class FirewallDecorator extends ActorDecorator {
      */
     protected boolean checkIfValid(Message message) {
 
-        if (message.getFrom() != null) {
-            Actor sender = ActorContext.lookup(message.getFrom().getName());
-
-            //if the actor is a proxy or if it is not indexed
-            if (message.getFrom() instanceof ActorProxy || sender == null) {
-                return false;
-            }
-
-            return true;
+        if (message.getFrom() == null) {
+            return false;
         }
 
-        return false;
+        Actor sender = ActorContext.lookup(message.getFrom().getName());
+        return !(message.getFrom() instanceof ActorProxy) && sender != null;
     }
 
     @Override

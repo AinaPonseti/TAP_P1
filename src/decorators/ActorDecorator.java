@@ -6,6 +6,10 @@ import messages.Message;
 public abstract class ActorDecorator extends Actor {
     protected Actor decoratedActor;
 
+    /**
+     * Constructor for the decorator
+     * @param actor actor to decorate
+     */
     public ActorDecorator(Actor actor){
         super(actor.getName());
         this.decoratedActor = actor;
@@ -13,13 +17,9 @@ public abstract class ActorDecorator extends Actor {
 
     @Override
     public void send(Message message){
-        decoratedActor.send(message);
+        messageQueue.add(message);
     }
 
-    @Override
-    public void process(){
-        decoratedActor.process();
-    }
     @Override
     public void onMessageReceived(Message message) {
         decoratedActor.onMessageReceived(message);

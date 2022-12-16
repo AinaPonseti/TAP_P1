@@ -8,16 +8,16 @@ public class ActorProxy extends Actor{
 
 	//attributes
 	private Actor actor;
-	private BlockingQueue<Message> messageQueue;
+	private BlockingQueue<Message> responseQueue;
 
 	/**
 	 * Constructor for the ActorProxy
 	 * @param actor actor
 	 */
 	public ActorProxy(Actor actor){
-		super(actor.getName());
+		super("proxy"+actor.getName());
 		this.actor=actor;
-		messageQueue = new LinkedBlockingQueue<>();
+		responseQueue = new LinkedBlockingQueue<>();
 	}
 
 
@@ -29,7 +29,7 @@ public class ActorProxy extends Actor{
 		if (message.getFrom() == null){
 			message.setFrom(this);
 		}
-        actor.send(message);
+		messageQueue.add(message);
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class ActorProxy extends Actor{
 	 * @return the message received by the proxy
 	 */
 	public void sendResponse(Message message){
-		this.messageQueue.add(message);
+		this.responseQueue.add(message);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class ActorProxy extends Actor{
 	 * @param message message to be sent to the proxy
 	 */
 	public void onMessageReceived(Message message){
-
+		actor.onMessageReceived(message);
 	}
 
 	/**
@@ -53,6 +53,6 @@ public class ActorProxy extends Actor{
 	 * @return message
 	 */
 	public Message receive() throws InterruptedException {
-		return messageQueue.take();
+		return responseQueue.take();
 	}
 }

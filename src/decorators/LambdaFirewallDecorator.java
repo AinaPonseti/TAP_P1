@@ -5,13 +5,13 @@ import actors.ActorContext;
 import actors.ActorProxy;
 import messages.AddClosureMessage;
 import messages.Message;
+import messages.QuitMessage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.function.Predicate;
 
-public class LambdaFirewallDecorator extends FirewallDecorator {
+public class LambdaFirewallDecorator extends ActorDecorator {
 
     private List<Predicate<Message>> filterList;
 
@@ -27,21 +27,16 @@ public class LambdaFirewallDecorator extends FirewallDecorator {
 
     @Override
     public void send(Message message) {
-        if (checkIfValid(message)) {
+        if (checkIfValid(message) || message instanceof QuitMessage) {
             if (message instanceof AddClosureMessage){
-                addFilter(((AddClosureMessage) message).getPredicate());
+                filterList.add(((AddClosureMessage) message).getPredicate());
             }
             else{
-                decoratedActor.send(message);
+                messageQueue.add(message);
             }
         }
     }
 
-    private void addFilter(Predicate<Message> filter) {
-        filterList.add(filter);
-    }
-
-    @Override
     protected boolean checkIfValid(Message message) {
 
         //if the sender is null
@@ -59,15 +54,8 @@ public class LambdaFirewallDecorator extends FirewallDecorator {
         return filterList.stream().allMatch(filter -> filter.test(message));
     }
 
-
-
     @Override
     public void onMessageReceived(Message message) {
-        if (message instanceof AddClosureMessage){
-            addFilter(((AddClosureMessage) message).getPredicate());
-        }
-        else{
-            decoratedActor.onMessageReceived(message);
-        }
+        decoratedActor.onMessageReceived(message);
     }
 }
