@@ -61,4 +61,6 @@ public class ActorContext{
 	public static Set<String> getNames(){
 		return actorRegistry.keySet();
 	}
+
+	public static Map getRegistry() { return actorRegistry; }
 }
