@@ -1,3 +1,5 @@
+import Validation.PingPong;
+import Validation.Ring;
 import actors.*;
 import messages.*;
 import observer.*;
@@ -100,6 +102,20 @@ public class app {
 		printTraffic(monitor);
 		printNumberofMessages(monitor,actor,actor2);
 
+		// validation
+		System.out.println(" ------------------- COST CALCULATION -------------------");
+		long ini=System.currentTimeMillis();
+		Ring ring = new Ring();
+		ring.createRing(100);
+		ring.sendMessageToRing(new Message(null, "hello"));
+		ring.deleteRing();
+		System.out.println("ms to send a message 100 times to 100 actors in a ring "+(System.currentTimeMillis()-ini) + " ms");
+		ini=System.currentTimeMillis();
+		PingPong pingPong= new PingPong();
+		pingPong.createPingPong();
+		pingPong.sendMessagePingPong(100);
+		//pingPong.quitPingPong();
+		System.out.println("ms to send 100 messages between actors: "+(System.currentTimeMillis()-ini) + " ms");
 
 	}
 
