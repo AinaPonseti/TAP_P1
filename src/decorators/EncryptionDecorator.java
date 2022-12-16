@@ -32,7 +32,7 @@ public class EncryptionDecorator extends ActorDecorator {
     @Override
     public void send(Message message) {
         if (message.getText() != null){
-            System.out.println("Message encrypted successfully");
+            encryptMessage(message);
         }
         messageQueue.add(message);
     }

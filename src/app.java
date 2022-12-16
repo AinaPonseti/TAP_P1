@@ -143,15 +143,10 @@ public class app {
 
 		// actor observer Pattern
 		System.out.println(" ------------------- OBSERVER -------------------");
-		Actor actor = new HelloWorldActor();
-		Actor actor2 = new HelloWorldActor();
+		Actor actor = ActorContext.spawnActor(new HelloWorldActor("helloActor"));
+		Actor actor2 = ActorContext.spawnActor(new HelloWorldActor("goodbyeActor"));
+
 		MonitorService monitor = new MonitorService();
-		//monitor.monitorActor(actor);
-		//monitor.monitorActor(actor2);
-
-
-		ActorContext.spawnActor("hello", actor);
-		ActorContext.spawnActor("godbye", actor2);
 		monitor.monitorAllActors();
 
 		System.out.println("Adding messages...");
@@ -178,7 +173,7 @@ public class app {
 	}
 
 	/**
-	 * Print the recived or sended messages from monitorized actors
+	 * Print the recived or sent messages from monitorized actors
 	 *
 	 * @param monitor monitorizer
 	 * @param version 0 -> sended messages, 1 -> recived messages, 2 -> events preformed
