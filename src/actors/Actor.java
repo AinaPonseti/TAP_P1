@@ -9,14 +9,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class Actor {
 
     //queue that contains all the messages sent to the actor
-    private BlockingQueue<Message> messageQueue;
-
+    protected BlockingQueue<Message> messageQueue;
+    protected String name;
     public Subject monitor;
+    
     /**
      * Constructor for the Actor class, initializes the messageQueue
      */
-    public Actor() {
+    public Actor(String name) {
         messageQueue = new LinkedBlockingQueue<>();
+        this.name = name;
         this.monitor = new Subject();
         monitor.notify(1, null);
     }
@@ -62,5 +64,12 @@ public abstract class Actor {
      */
     public abstract void onMessageReceived(Message message);
 
+    /**
+     * Getter for the actor name
+     * @return string (name of the actor)
+     */
+    public String getName(){
+        return name;
+    }
 }
 
