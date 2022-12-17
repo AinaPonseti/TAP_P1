@@ -6,8 +6,9 @@ import decorators.LambdaFirewallDecorator;
 import messages.*;
 import java.util.function.Predicate;
 
-import messages.*;
 import observer.*;
+import reflection.DynamicProxy;
+import reflection.InsultService;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class app {
 	public static void main(String[] args) {
 
 		ActorContext actorContext = ActorContext.getInstance();
+		System.out.println(Message.class.getName());
 
 		//actor system demonstration
 		System.out.println(" ------------------- HEllO WORLD -------------------");
@@ -138,7 +140,14 @@ public class app {
 
 		System.out.println("Done. \n");
 
-		insult.send(new QuitMessage());
+
+		//dynamicProxy demonstration
+		System.out.println(" ------------------- DynamicProxy -------------------");
+		insult = (ActorProxy) ActorContext.spawnActor(new ActorProxy(new InsultActor("insultActor")));
+		InsultService insulter = DynamicProxy.intercept(new InsultService(), insult);
+		insulter.addInsult("stupid");
+		System.out.println(insulter.getInsult());
+
 
 
 		// actor observer Pattern
