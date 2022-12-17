@@ -1,6 +1,8 @@
 package reflection;
 
+import actors.ActorContext;
 import actors.ActorProxy;
+import actors.InsultActor;
 import messages.AddInsultMessage;
 import messages.GetAllInsultsMessage;
 import messages.GetInsultMessage;
@@ -15,18 +17,18 @@ public class InsultService implements InsultServiceInt{
     private ActorProxy insultActor;
 
     /**
-     * Constructor for the InsultService
-     * @param insultActor actor
-     */
-    public InsultService(ActorProxy insultActor) {
-        this.insultActor = insultActor;
-    }
-
-    /**
      * Default constructor for the InsultService
      */
     public InsultService() {
         this.insultActor = null;
+    }
+
+    /**
+     * Constructor for the InsultService
+     * @param actor actor
+     */
+    public InsultService(ActorProxy actor) {
+        this.insultActor = actor;
     }
 
     /**
@@ -37,10 +39,18 @@ public class InsultService implements InsultServiceInt{
         this.insultActor = insultActor;
     }
 
+    /**
+     * Method that adds an insult to the insultActor list
+     * @param insult insult to add
+     */
     public void addInsult(String insult){
         insultActor.send(new AddInsultMessage(null, insult));
     }
 
+    /**
+     * Method that gets all the insults from the actors list
+     * @return String with all the insults
+     */
     public String getAllInsults(){
         insultActor.send(new GetAllInsultsMessage(null));
         try {
@@ -52,7 +62,20 @@ public class InsultService implements InsultServiceInt{
         return null;
     }
 
+    /**
+     * Getter for the insultActor
+     * @return the actor
+     */
+    public ActorProxy getInsultActor() {
+        return insultActor;
+    }
 
+
+
+    /**
+     * Method to get a random insult form the actor
+     * @return string with one insult
+     */
     public String getInsult(){
         insultActor.send(new GetInsultMessage());
         try {

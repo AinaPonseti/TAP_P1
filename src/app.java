@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import observer.*;
 import reflection.DynamicProxy;
 import reflection.InsultService;
+import reflection.ReflectiveActor;
 
 import java.util.List;
 import java.util.Map;
@@ -142,15 +143,35 @@ public class app {
 
 
 		//dynamicProxy demonstration
-		System.out.println(" ------------------- DynamicProxy -------------------");
+		System.out.println(" ------------------- DYNAMIC PROXY -------------------");
 		insult = (ActorProxy) ActorContext.spawnActor(new ActorProxy(new InsultActor("insultActor")));
 		InsultService insulter = DynamicProxy.intercept(new InsultService(), insult);
+		System.out.println("Adding 'stupid'...");
 		insulter.addInsult("stupid");
+		System.out.println("Adding 'idiot'...");
+		insulter.addInsult("idiot");
+		System.out.println("Adding 'jerk'...");
+		insulter.addInsult("jerk");
+		System.out.println("Done.");
+
+		System.out.println("Getting two random insults...");
 		System.out.println(insulter.getInsult());
+		System.out.println(insulter.getInsult());
+		System.out.println("Done.\n");
+
+		insult.send(new QuitMessage());
+
+		//reflection demonstration
+		System.out.println(" ------------------- REFLECTION -------------------");
+		ReflectiveActor reflectiveActor = (ReflectiveActor) ActorContext.spawnActor(new ReflectiveActor(new InsultService(new ActorProxy(new InsultActor("insultActor"))), "reflectiveActor"));
+		reflectiveActor.send(new AddInsultMessage(null, "idiot"));
+		reflectiveActor.send(new AddInsultMessage(null, "stupid"));
+		reflectiveActor.send(new AddInsultMessage(null, "jerk"));
+		reflectiveActor.send(new GetInsultMessage());
 
 
 
-		// actor observer Pattern
+		// actor observer pattern
 		System.out.println(" ------------------- OBSERVER -------------------");
 		Actor actor = ActorContext.spawnActor(new HelloWorldActor("helloActor"));
 		Actor actor2 = ActorContext.spawnActor(new HelloWorldActor("goodbyeActor"));
