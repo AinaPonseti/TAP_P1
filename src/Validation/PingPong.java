@@ -2,44 +2,57 @@ package Validation;
 
 import actors.ActorContext;
 import actors.PingPongActor;
+import actors.RingActor;
 import messages.Message;
 import messages.QuitMessage;
+import observer.MonitorService;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import static java.lang.Thread.sleep;
 
 public class PingPong {
     PingPongActor ping;
-    int nRounds;
-    Semaphore sem;
+    int nRounds,nMessages;
+    MonitorService monitor = new MonitorService();
 
-    public PingPong(){
-        sem = new Semaphore(2);
+    public PingPong(int rounds){
         ping = new PingPongActor();
-        ping.setSem(sem);
-        ping.getActor().setSem(sem);
-        nRounds = 15;
+        nRounds = rounds;
     }
-
     public void createPingPong(){
         ActorContext.spawnActor("Ping", ping);
     }
 
     public void sendMessagePingPong(int numMessages){
-        System.out.println("Sending a message to the pingPong actors...");
+        nMessages=numMessages;
+        ping.addMessages(nMessages*nRounds);
+        ping.getActor().addMessages(nMessages*nRounds);
         for(int i=0; i<numMessages; i++){
             ping.send(new Message(null, "PING"));
-        }
-        try {
-            sem.acquire(2);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 
     public void quitPingPong(){
         ping.send(new QuitMessage());
         ping.getActor().send(new QuitMessage());
+    }
+
+
+    public boolean allFinalized() {
+        PingPongActor auxiliary = ping;
+        for(int i=0; i<2; i++) {
+            if (auxiliary.getnMessages()<nMessages*nRounds) {
+                return false;
+            }
+            auxiliary = auxiliary.getActor();
+        }
+        return true;
+    }
+
+    public int getMessagesFinalActor(){
+        return ping.getActor().getnMessages();
     }
 }

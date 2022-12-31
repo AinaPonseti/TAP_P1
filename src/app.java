@@ -101,22 +101,37 @@ public class app {
 		printEvents(monitor);
 		printTraffic(monitor);
 		printNumberofMessages(monitor,actor,actor2);
-
-		// validation
+		
 		System.out.println(" ------------------- COST CALCULATION -------------------");
+		int rounds = 1, nMessages = 100, sizeRing = 100;
 		long ini=System.currentTimeMillis();
-		Ring ring = new Ring();
-		ring.createRing(100);
-		ring.sendMessageToRing(new Message(null, "hello"));
+		Ring ring = new Ring(rounds,nMessages);
+		ring.createRing(sizeRing);
+		for(int i=0; i<nMessages; i++){
+			ring.sendMessageToRing(new Message(null, "hello"));
+		}
+		while (!ring.allFinalized()){
+			try {
+				sleep(1);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		System.out.println("ms to send "+nMessages+" messages "+rounds+" times to "+sizeRing+" actors in a ring "+(System.currentTimeMillis()-ini) + " ms");
 		ring.deleteRing();
-		System.out.println("ms to send a message 100 times to 100 actors in a ring "+(System.currentTimeMillis()-ini) + " ms");
 		ini=System.currentTimeMillis();
-		PingPong pingPong= new PingPong();
+		PingPong pingPong= new PingPong(rounds);
 		pingPong.createPingPong();
-		pingPong.sendMessagePingPong(100);
-		//pingPong.quitPingPong();
-		System.out.println("ms to send 100 messages between actors: "+(System.currentTimeMillis()-ini) + " ms");
-
+		pingPong.sendMessagePingPong(nMessages);
+		while (!pingPong.allFinalized()){
+			try {
+				sleep(1);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		System.out.println("ms to send "+nMessages+" messages "+rounds+" times between actors: "+(System.currentTimeMillis()-ini) + " ms");
+		pingPong.quitPingPong();
 	}
 
 	/**
