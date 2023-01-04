@@ -169,6 +169,10 @@ public class app {
 		printTraffic(monitor);
 		printNumberofMessages(monitor,actor,actor2);
 
+		//Interface
+		//Interfaz ventana = new Interfaz();
+		//ventana.setVisible(true);
+
 
 	}
 
