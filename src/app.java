@@ -155,17 +155,16 @@ public class app {
 		System.out.println(insulter.getInsult());
 		System.out.println("Done.\n");
 
-		insult.send(new QuitMessage());
 
 		//reflection demonstration
 		System.out.println(" ------------------- REFLECTION -------------------");
-		ActorProxy reflectiveActor = ActorContext.spawnActor(new ReflectiveActor(new InsultService(new ActorProxy(new InsultActor("insultActor"))), "reflectiveActor"));
-		reflectiveActor.send(new AddInsultMessage(null, "idiot"));
-		reflectiveActor.send(new AddInsultMessage(null, "stupid"));
-		reflectiveActor.send(new AddInsultMessage(null, "jerk"));
-		reflectiveActor.send(new GetInsultMessage());
+		//ActorProxy reflectiveActor = ActorContext.spawnActor(new ReflectiveActor(new InsultService(insult), "reflectiveActor"));
+		//reflectiveActor.send(new AddInsultMessage(null, "idiot"));
+		//reflectiveActor.send(new AddInsultMessage(null, "stupid"));
+		//reflectiveActor.send(new AddInsultMessage(null, "jerk"));
+		//reflectiveActor.send(new GetInsultMessage());
 
-
+		insult.send(new QuitMessage());
 
 		// actor observer pattern
 		System.out.println(" ------------------- OBSERVER -------------------");

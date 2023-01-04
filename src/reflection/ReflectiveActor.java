@@ -1,23 +1,23 @@
 package reflection;
 
 import actors.Actor;
-import messages.AddInsultMessage;
 import messages.Message;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class ReflectiveActor extends Actor {
+public class ReflectiveActor extends Actor{
 
-    private InsultService insultService;
+    private Object target;
 
     /**
      * Constructor for the ReflectiveActor class
-     * @param insultService insultService
+     * @param target target
      */
-    public ReflectiveActor(InsultService insultService, String name) {
+    public ReflectiveActor(Object target, String name) {
         super(name);
-        this.insultService = insultService;
+        this.target = target;
     }
 
     @Override
@@ -30,8 +30,8 @@ public class ReflectiveActor extends Actor {
         try {
             Class[] params = new Class[1];
             params[0] = String.class;
-            Method method = insultService.getClass().getMethod(methodName, params);
-            method.invoke(null, message.getText());
+            Method method = target.getClass().getMethod(methodName, params);
+            method.invoke(target, message.getText());
 
         }catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
             e.printStackTrace();

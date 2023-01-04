@@ -1,8 +1,6 @@
 package reflection;
 
-import actors.ActorContext;
 import actors.ActorProxy;
-import actors.InsultActor;
 import messages.AddInsultMessage;
 import messages.GetAllInsultsMessage;
 import messages.GetInsultMessage;
@@ -61,16 +59,6 @@ public class InsultService implements InsultServiceInt{
         }
         return null;
     }
-
-    /**
-     * Getter for the insultActor
-     * @return the actor
-     */
-    public ActorProxy getInsultActor() {
-        return insultActor;
-    }
-
-
 
     /**
      * Method to get a random insult form the actor

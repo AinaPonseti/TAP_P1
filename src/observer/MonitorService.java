@@ -72,8 +72,11 @@ public class MonitorService {
     public Map getNumberofMessages(Actor... actor){
         Map<String, List<Actor>> map = new HashMap<>();
         List<String> events = new ArrayList<>();
+
         for( var elem : actor){
+
             Map<String, List<String>> aux = listeners.get(elem).get(2).get(); // get event list from actor
+
             if(aux.containsKey("CREATED")){
                 events=aux.get("CREATED");
             }
