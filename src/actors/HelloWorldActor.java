@@ -13,6 +13,7 @@ public class HelloWorldActor extends Actor {
         super(name);
     }
 
+
     @Override
     public void onMessageReceived(Message message) {
         System.out.println(message.getText());

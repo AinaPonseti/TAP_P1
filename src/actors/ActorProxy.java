@@ -16,7 +16,7 @@ public class ActorProxy extends Actor{
 	 */
 	public ActorProxy(Actor actor){
 		super("proxy"+actor.getName());
-		this.actor=actor;
+		this.actor = actor;
 		responseQueue = new LinkedBlockingQueue<>();
 	}
 
@@ -29,7 +29,7 @@ public class ActorProxy extends Actor{
 		if (message.getFrom() == null){
 			message.setFrom(this);
 		}
-		messageQueue.add(message);
+		actor.send(message);
 	}
 
 	/**
@@ -54,5 +54,13 @@ public class ActorProxy extends Actor{
 	 */
 	public Message receive() throws InterruptedException {
 		return responseQueue.take();
+	}
+
+	/**
+	 * Getter for the actor
+	 * @return actor
+	 */
+	public Actor getActor() {
+		return actor;
 	}
 }

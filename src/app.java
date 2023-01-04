@@ -25,7 +25,7 @@ public class app {
 
 		//actor system demonstration
 		System.out.println(" ------------------- HEllO WORLD -------------------");
-		ActorProxy helloActor = (ActorProxy) actorContext.spawnActor(new ActorProxy(new HelloWorldActor("hello")));
+		ActorProxy helloActor = actorContext.spawnActor(new HelloWorldActor("hello"));
 		System.out.println("Sending 4 concurrent Hello World messages...");
 		helloActor.send(new Message(null, "Hello from the HelloWorldActor!"));
 		helloActor.send(new Message(null, "Hello from the HelloWorldActor!"));
@@ -43,7 +43,7 @@ public class app {
 
 		//actor proxy demonstration
 		System.out.println(" ------------------- INSULTS -------------------");
-		ActorProxy insult = (ActorProxy) actorContext.spawnActor(new ActorProxy(new InsultActor("insultActor")));
+		ActorProxy insult = actorContext.spawnActor(new InsultActor("insultActor"));
 
 		System.out.println("Adding insults...");
 		insult.send(new AddInsultMessage(null, "stupid"));
@@ -80,14 +80,13 @@ public class app {
 		//decorators demonstration
 		System.out.println(" ------------------- DECORATORS -------------------");
 		System.out.println("Creating a Firewall decorator for the helloWorldActor...");
-		FirewallDecorator firewallDecorator = (FirewallDecorator) actorContext.spawnActor(new FirewallDecorator(new HelloWorldActor("firewallHello")));
-		InsultActor insultActor = (InsultActor) actorContext.spawnActor(new InsultActor("insultActor"));
+		ActorProxy firewallDecorator = actorContext.spawnActor(new FirewallDecorator(new HelloWorldActor("firewallHello")));
 		System.out.println("Done.\n");
 
 		System.out.println("Sending message from different senders...");
-		firewallDecorator.send(new Message(insultActor, "Hello from the insultActor!"));
 		firewallDecorator.send(new Message(null, "Hello from null!"));
-		firewallDecorator.send(new Message(insult, "Hello from the proxy for the insultActor!"));
+		firewallDecorator.send(new Message(insult, "Hello from the insultActorProxy!"));
+		firewallDecorator.send(new Message(insult.getActor(), "Hello from the insultActor!"));
 
 		System.out.println("Waiting for the messages to arrive...");
 		try {
@@ -99,13 +98,13 @@ public class app {
 		System.out.println("Done.\n");
 
 		System.out.println("Creating a LambdaFirewallDecorator for the insultActor...");
-		LambdaFirewallDecorator lambdaFirewallDecorator = (LambdaFirewallDecorator) actorContext.spawnActor(new LambdaFirewallDecorator(insult));
+		ActorProxy lambdaFirewallDecorator = actorContext.spawnActor(new LambdaFirewallDecorator(insult));
 		System.out.println("Done.\n");
 
 		Predicate<Message> lambda = message -> GetAllInsultsMessage.class.isInstance(message);
-		lambdaFirewallDecorator.send(new AddClosureMessage(firewallDecorator, lambda));
-		lambdaFirewallDecorator.send(new AddInsultMessage(firewallDecorator,"new insult"));
-		lambdaFirewallDecorator.send(new GetAllInsultsMessage(firewallDecorator));
+		lambdaFirewallDecorator.send(new AddClosureMessage(firewallDecorator.getActor(), lambda));
+		lambdaFirewallDecorator.send(new AddInsultMessage(firewallDecorator.getActor(),"new insult"));
+		lambdaFirewallDecorator.send(new GetAllInsultsMessage(firewallDecorator.getActor()));
 
 		System.out.println("Waiting for the messages to arrive...");
 		try {
@@ -120,7 +119,7 @@ public class app {
 		helloActor.send(new QuitMessage());
 
 		System.out.println("Creating an EncryptionDecorator for a helloWorldActor...");
-		EncryptionDecorator encryptionDecorator = (EncryptionDecorator) ActorContext.spawnActor(new EncryptionDecorator(new HelloWorldActor("encryptionDecorator")));
+		ActorProxy encryptionDecorator = ActorContext.spawnActor(new EncryptionDecorator(new HelloWorldActor("encryptionDecorator")));
 		System.out.println("Sending HelloWorld message...");
 		encryptionDecorator.send(new Message(helloActor, "Hello World from the EncryptionDecorator!"));
 
@@ -135,16 +134,13 @@ public class app {
 
 		encryptionDecorator.send(new QuitMessage());
 		helloActor.send(new QuitMessage());
-		insultActor.send(new QuitMessage());
 		firewallDecorator.send(new QuitMessage());
 		lambdaFirewallDecorator.send(new QuitMessage());
-
-		System.out.println("Done. \n");
 
 
 		//dynamicProxy demonstration
 		System.out.println(" ------------------- DYNAMIC PROXY -------------------");
-		insult = (ActorProxy) ActorContext.spawnActor(new ActorProxy(new InsultActor("insultActor")));
+		insult = ActorContext.spawnActor(new InsultActor("insultActor"));
 		InsultService insulter = DynamicProxy.intercept(new InsultService(), insult);
 		System.out.println("Adding 'stupid'...");
 		insulter.addInsult("stupid");
@@ -163,7 +159,7 @@ public class app {
 
 		//reflection demonstration
 		System.out.println(" ------------------- REFLECTION -------------------");
-		ReflectiveActor reflectiveActor = (ReflectiveActor) ActorContext.spawnActor(new ReflectiveActor(new InsultService(new ActorProxy(new InsultActor("insultActor"))), "reflectiveActor"));
+		ActorProxy reflectiveActor = ActorContext.spawnActor(new ReflectiveActor(new InsultService(new ActorProxy(new InsultActor("insultActor"))), "reflectiveActor"));
 		reflectiveActor.send(new AddInsultMessage(null, "idiot"));
 		reflectiveActor.send(new AddInsultMessage(null, "stupid"));
 		reflectiveActor.send(new AddInsultMessage(null, "jerk"));
