@@ -30,21 +30,21 @@ public class Ring {
 
     public void createRing(int sizeRing){
         size=sizeRing;
-        ActorContext.spawnActor(("ring1"), ringActor);
+        ActorContext.spawnActor(ringActor);
         for (int i=0;i<=(sizeRing-3);i++){
             ringActor = new RingActor(ringActor,nMessages*rounds);
             monitor.monitorActor(ringActor);
-            ActorContext.spawnActor(("ring"+i), ringActor);
+            ActorContext.spawnActor(ringActor);
         }
         ringEnd.setActor(ringActor);
         ringEnd.setnRounds(nMessages*rounds);
         monitor.monitorActor(ringEnd);
-        ActorContext.spawnActor(("ringEnd"), ringEnd);
-        ring = new ActorProxy(ActorContext.spawnActor("ring", ringActor));
+        ActorContext.spawnActor(ringEnd);
+        ring = new ActorProxy(ActorContext.spawnActor(ringActor));
     }
 
     public void sendMessageToRing(Message messageToSend){
-        ring.send(messageToSend);
+        ringActor.send(messageToSend);
         // look if the last actor of the ring has finalized sending messages
     }
 

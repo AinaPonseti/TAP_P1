@@ -23,7 +23,7 @@ public class PingPong {
         nRounds = rounds;
     }
     public void createPingPong(){
-        ActorContext.spawnActor("Ping", ping);
+        ActorContext.spawnActor(ping);
     }
 
     public void sendMessagePingPong(int numMessages){

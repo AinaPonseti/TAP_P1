@@ -14,14 +14,14 @@ public class PingPongActor extends Actor{
     int nMessages=0,totalMessages=0;
     Message message;
     public PingPongActor(){
-        super();
+        super("Pong");
         actor=new PingPongActor(this);
         message=new Message(this,"PONG");
-        ActorContext.spawnActor("Pong",actor);
+        ActorContext.spawnActor(actor);
     }
 
     public PingPongActor(PingPongActor pingPongActor){
-        super();
+        super("Ping");
         actor= pingPongActor;
         message=new Message(this,"PING");
     }
