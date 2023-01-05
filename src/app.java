@@ -1,3 +1,5 @@
+import Validation.PingPong;
+import Validation.Ring;
 import actors.*;
 
 import decorators.EncryptionDecorator;
@@ -172,8 +174,37 @@ public class app {
 		//Interface
 		//Interfaz ventana = new Interfaz();
 		//ventana.setVisible(true);
-
-
+		
+		System.out.println(" ------------------- COST CALCULATION -------------------");
+		int rounds = 1, nMessages = 100, sizeRing = 100;
+		long ini=System.currentTimeMillis();
+		Ring ring = new Ring(rounds,nMessages);
+		ring.createRing(sizeRing);
+		for(int i=0; i<nMessages; i++){
+			ring.sendMessageToRing(new Message(null, "hello"));
+		}
+		while (!ring.allFinalized()){
+			try {
+				sleep(1);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		System.out.println("ms to send "+nMessages+" messages "+rounds+" times to "+sizeRing+" actors in a ring "+(System.currentTimeMillis()-ini) + " ms");
+		ring.deleteRing();
+		ini=System.currentTimeMillis();
+		PingPong pingPong= new PingPong(rounds);
+		pingPong.createPingPong();
+		pingPong.sendMessagePingPong(nMessages);
+		while (!pingPong.allFinalized()){
+			try {
+				sleep(1);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		System.out.println("ms to send "+nMessages+" messages "+rounds+" times between actors: "+(System.currentTimeMillis()-ini) + " ms");
+		pingPong.quitPingPong();
 	}
 
 	/**

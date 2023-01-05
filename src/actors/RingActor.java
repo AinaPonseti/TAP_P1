@@ -1,21 +1,41 @@
 package actors;
 
-public abstract class RingActor extends Actor {
+import messages.Message;
+import messages.QuitMessage;
+import java.util.concurrent.Semaphore;
 
-    //constants
-    private static int numActorsInRing = 0;
+public class RingActor extends Actor {
+    RingActor nextActor;
 
-    //attributes
-    private Actor successor;
-    private int id;
+    private int nMessages = 0;
+    private int totalMessages=10000;
 
-
-    /**
-     * Constructor for the Actor class, initializes the messageQueue
-     * @param name name of the actor
-     */
-    public RingActor(String name) {
-        super(name);
-        id = ++numActorsInRing;
+    public RingActor() {
+        super("Ring");
     }
+    public RingActor(RingActor actor, int nMesaj){
+        super("Ring");
+        this.nextActor=actor;
+        this.totalMessages=nMesaj;
+    }
+
+    public void setActor(RingActor actor){
+        this.nextActor=actor;
+    }
+    @Override
+    public void onMessageReceived(Message message) {
+        if(totalMessages>nMessages){
+            nMessages++;
+            nextActor.send(message);
+            System.out.println(this + "message: " + message.getText() + " " + nMessages);
+        }
+
+    }
+
+    public int getnMessages(){ return nMessages; }
+    public void setnRounds(int rounds){ totalMessages=rounds; }
+    public void addMessages(int nMessages){
+        totalMessages=totalMessages+nMessages;
+    }
+    public RingActor getNextActor(){ return nextActor;}
 }
