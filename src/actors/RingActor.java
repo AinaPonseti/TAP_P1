@@ -8,7 +8,7 @@ public class RingActor extends Actor {
     RingActor nextActor;
 
     private int nMessages = 0;
-    private int totalMessages=10000;
+    private int totalMessages=10000000;
 
     public RingActor() {
         super("Ring");
@@ -24,11 +24,13 @@ public class RingActor extends Actor {
     }
     @Override
     public void onMessageReceived(Message message) {
-        if(totalMessages>nMessages){
-            nMessages++;
-            nextActor.send(message);
-            System.out.println(this + "message: " + message.getText() + " " + nMessages);
-        }
+        if(totalMessages<10000000){
+            if(totalMessages>nMessages){
+                nMessages++;
+                nextActor.send(message);
+            }
+        }else nextActor.send(message);
+
 
     }
 

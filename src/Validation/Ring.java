@@ -28,6 +28,23 @@ public class Ring {
         monitor.monitorActor(ringActor);
     }
 
+    // infinite message processing
+    public Ring(RingActor frst,RingActor scnd){
+        ringEnd=frst;
+        ringActor=scnd;
+        ringEnd.setActor(ringActor);
+        ringActor.setActor(ringEnd);
+        ActorContext.spawnActor(ringEnd);
+        ActorContext.spawnActor(ringActor);
+        ring = new ActorProxy(ActorContext.spawnActor(ringActor));
+    }
+
+    public void addActor(RingActor act){
+        act.setActor(ringEnd.getNextActor());
+        ringEnd.setActor(act);
+        ActorContext.spawnActor(act);
+    }
+
     public void createRing(int sizeRing){
         size=sizeRing;
         ActorContext.spawnActor(ringActor);
