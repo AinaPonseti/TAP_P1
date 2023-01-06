@@ -33,7 +33,7 @@ public class FirewallDecorator extends ActorDecorator {
         }
 
         Actor sender = ActorContext.lookup(message.getFrom().getName());
-        return !(message.getFrom() instanceof ActorProxy) && sender != null;
+        return sender != null;
     }
 
     @Override

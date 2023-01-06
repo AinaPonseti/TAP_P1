@@ -37,12 +37,15 @@ public class ActorContext{
 	 * @param actor actor to be spawned
 	 * @return the actor
 	 */
-	public static Actor spawnActor(Actor actor){
+	public static ActorProxy spawnActor(Actor actor){
 		actorRegistry.put(actor.getName(), actor);
+
+		//thread de l'actor
 		Thread thread = new Thread(actor::process);
 		thread.setName(actor.getName());
 		thread.start();
-		return actor;
+
+		return  new ActorProxy(actor);
 	}
 
 	/**
@@ -50,8 +53,10 @@ public class ActorContext{
 	 * @param name name of the actor
 	 * @return the actor with that name
 	 */
-	public static Actor lookup(String name){
-		return actorRegistry.get(name);
+	public static ActorProxy lookup(String name){
+		Actor actor = actorRegistry.get(name);
+		if (actor == null) return null;
+		return new ActorProxy(actor);
 	}
 
 	/**

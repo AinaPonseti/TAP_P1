@@ -44,7 +44,6 @@ public class LambdaFirewallDecorator extends ActorDecorator {
             return false;
         }
 
-        //if the sender is a proxy or if it is not indexed
         Actor sender = ActorContext.lookup(message.getFrom().getName());
         if (message.getFrom() instanceof ActorProxy || sender == null) {
             return false;
