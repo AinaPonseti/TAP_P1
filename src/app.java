@@ -5,6 +5,7 @@ import actors.*;
 import decorators.EncryptionDecorator;
 import decorators.FirewallDecorator;
 import decorators.LambdaFirewallDecorator;
+import framework.Interfaz;
 import messages.*;
 import java.util.function.Predicate;
 
@@ -23,6 +24,7 @@ public class app {
 	public static void main(String[] args) {
 
 		ActorContext actorContext = ActorContext.getInstance();
+
 		System.out.println(Message.class.getName());
 
 		//actor system demonstration
@@ -195,7 +197,10 @@ public class app {
 		printEvents(monitor);
 		printTraffic(monitor);
 		printNumberofMessages(monitor,actor,actor2);
-		
+*/
+		Interfaz ventana = new Interfaz();
+		ventana.setVisible(true);
+/*
 		System.out.println(" ------------------- COST CALCULATION -------------------");
 		int rounds = 1, nMessages = 100, sizeRing = 100;
 		long ini=System.currentTimeMillis();
@@ -225,7 +230,7 @@ public class app {
 			}
 		}
 		System.out.println("ms to send "+nMessages+" messages "+rounds+" times between actors: "+(System.currentTimeMillis()-ini) + " ms");
-		pingPong.quitPingPong();
+		pingPong.quitPingPong();*/
 	}
 
 	/**
