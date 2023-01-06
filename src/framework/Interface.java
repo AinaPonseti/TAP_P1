@@ -13,7 +13,7 @@ import java.util.List;
 
 import static java.lang.System.exit;
 
-public class Interfaz extends JFrame {
+public class Interface extends JFrame {
     int nActors=0;
     JPanel panel = new JPanel(new FlowLayout(0)), panel2 = new JPanel(new FlowLayout(2));
 
@@ -25,7 +25,7 @@ public class Interfaz extends JFrame {
     boolean pideParar;
     private Button buttonCreateA, buttonSendMessage, buttonStop;
     static final long serialVersionUID = 0;
-    public Interfaz() {
+    public Interface() {
         super("Actors");
         this.setSize(new Dimension(560, 460));
         buttonSendMessage = new Button("Send a message");
@@ -54,7 +54,7 @@ public class Interfaz extends JFrame {
                 JPanel panelAct = new JPanel();
                 barra = new JProgressBar();
                 nameActor = new JLabel("Actor "+nActors);
-                estadist = new JLabel("nº messages processated: ");
+                estadist = new JLabel("nº messages processed: ");
                 panelAct.setLayout(new GridLayout(0,3));
                 panelAct.add(barra);
                 panelAct.add(nameActor);
@@ -68,7 +68,7 @@ public class Interfaz extends JFrame {
                 JPanel panelAct2 = new JPanel();
                 barra2 = new JProgressBar();
                 nameActor = new JLabel("Actor "+nActors);
-                estadist2 = new JLabel("nº messages processated: ");
+                estadist2 = new JLabel("nº messages processed: ");
                 panelAct2.setLayout(new GridLayout(0,3));
                 panelAct2.add(barra2);
                 panelAct2.add(nameActor);
@@ -82,7 +82,7 @@ public class Interfaz extends JFrame {
                 barra = new JProgressBar();
                 //iniciaCuenta();
                 nameActor = new JLabel("Actor "+nActors);
-                estadist = new JLabel("nº messages processated: ");
+                estadist = new JLabel("nº messages processed: ");
                 panelAct.setLayout(new GridLayout(0,3));
                 panelAct.add(barra);
                 panelAct.add(nameActor);
@@ -164,7 +164,7 @@ public class Interfaz extends JFrame {
                 a=(List) monitor.getRecivedMessages().get(actor);
                 max=a.size();
                 bar.setMaximum(max);
-                label.setText("nº messages processated: "+mesSended+"/"+max);
+                label.setText("nº messages processed: "+mesSended+"/"+max);
 
                 try {
                     sleep(100);

@@ -5,14 +5,13 @@ import actors.*;
 import decorators.EncryptionDecorator;
 import decorators.FirewallDecorator;
 import decorators.LambdaFirewallDecorator;
-import framework.Interfaz;
+import framework.Interface;
 import messages.*;
 import java.util.function.Predicate;
 
 import observer.*;
 import reflection.DynamicProxy;
 import reflection.InsultService;
-import reflection.ReflectiveActor;
 
 import java.util.List;
 import java.util.Map;
@@ -161,7 +160,7 @@ public class app {
 
 
 		//reflection demonstration
-		System.out.println(" ------------------- REFLECTION -------------------");
+		//System.out.println(" ------------------- REFLECTION -------------------");
 		//ActorProxy reflectiveActor = ActorContext.spawnActor(new ReflectiveActor(new InsultService(insult), "reflectiveActor"));
 		//reflectiveActor.send(new AddInsultMessage(null, "idiot"));
 		//reflectiveActor.send(new AddInsultMessage(null, "stupid"));
@@ -197,10 +196,9 @@ public class app {
 		printEvents(monitor);
 		printTraffic(monitor);
 		printNumberofMessages(monitor,actor,actor2);
-*/
-		Interfaz ventana = new Interfaz();
+		Interface ventana = new Interface();
 		ventana.setVisible(true);
-/*
+
 		System.out.println(" ------------------- COST CALCULATION -------------------");
 		int rounds = 1, nMessages = 100, sizeRing = 100;
 		long ini=System.currentTimeMillis();
@@ -230,7 +228,7 @@ public class app {
 			}
 		}
 		System.out.println("ms to send "+nMessages+" messages "+rounds+" times between actors: "+(System.currentTimeMillis()-ini) + " ms");
-		pingPong.quitPingPong();*/
+		pingPong.quitPingPong();
 	}
 
 	/**
