@@ -2,6 +2,7 @@ package observer;
 
 import actors.Actor;
 import actors.ActorContext;
+import actors.ActorProxy;
 import messages.Message;
 
 import java.util.*;
@@ -16,6 +17,9 @@ public class MonitorService {
      * @param actor the actor to monitorize
      */
     public void monitorActor(Actor actor) {
+        if(actor instanceof ActorProxy){
+            actor=((ActorProxy) actor).getActor();
+        }
         actor.monitor.subscribe(new MessagesListener());
         actor.monitor.subscribe(new TrafficListener());
         actor.monitor.subscribe(new EventsListener());

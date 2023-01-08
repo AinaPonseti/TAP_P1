@@ -16,6 +16,7 @@ import reflection.InsultService;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.System.exit;
 import static java.lang.Thread.sleep;
 
 
@@ -171,11 +172,12 @@ public class app {
 
 		// actor observer pattern
 		System.out.println(" ------------------- OBSERVER -------------------");
-		Actor actor = ActorContext.spawnActor(new HelloWorldActor("helloActor"));
-		Actor actor2 = ActorContext.spawnActor(new HelloWorldActor("goodbyeActor"));
+		ActorProxy actor = ActorContext.spawnActor(new HelloWorldActor("helloActor"));
+		ActorProxy actor2 = ActorContext.spawnActor(new HelloWorldActor("goodbyeActor"));
 
 		MonitorService monitor = new MonitorService();
-		monitor.monitorAllActors();
+		monitor.monitorActor(actor);
+		monitor.monitorActor(actor2);
 
 		System.out.println("Adding messages...");
 		for (int i = 0; i < 10; i++) {
@@ -196,8 +198,6 @@ public class app {
 		printEvents(monitor);
 		printTraffic(monitor);
 		printNumberofMessages(monitor,actor,actor2);
-		Interface ventana = new Interface();
-		ventana.setVisible(true);
 
 		System.out.println(" ------------------- COST CALCULATION -------------------");
 		int rounds = 1, nMessages = 100, sizeRing = 100;
@@ -229,6 +229,7 @@ public class app {
 		}
 		System.out.println("ms to send "+nMessages+" messages "+rounds+" times between actors: "+(System.currentTimeMillis()-ini) + " ms");
 		pingPong.quitPingPong();
+		exit(1);
 	}
 
 	/**
@@ -278,17 +279,18 @@ public class app {
 			}
 		}
 	}
-	private static void printNumberofMessages(MonitorService monitor,Actor actor, Actor actor2) {
+	private static void printNumberofMessages(MonitorService monitor,ActorProxy actor, ActorProxy actor2) {
 		Map<String, List<Actor>> map;
-		map = monitor.getNumberofMessages(actor, actor2);
+		map = monitor.getNumberofMessages(actor.getActor(), actor2.getActor());
 		System.out.println("----------- Events: -----------");
 		for (var entry : map.entrySet()) {
 			System.out.println("event : " + entry.getKey());
-			System.out.println("Actors: ");
+			System.out.print("Actors:");
 			for (var mes : entry.getValue()) {
-				System.out.println("" + getActorName(mes));
+				System.out.print(" " + getActorName(mes));
 
 			}
+			System.out.println("");
 		}
 	}
 
