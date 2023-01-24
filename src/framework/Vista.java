@@ -13,19 +13,16 @@ import java.util.List;
 
 import static java.lang.System.exit;
 
-public class Interface extends JFrame {
-    int nActors=0;
+public class Vista extends JFrame {
     JPanel panel = new JPanel(new FlowLayout(0)), panel2 = new JPanel(new FlowLayout(2));
-
-    JLabel nameActor, estadist;
-    ThreadCarga aux;
+    Control control=new Control();
+    JLabel nameActor;
+    int nActors=0;
     Object objeto = new Object();
-    Ring ring;
-    MonitorService monitor = new MonitorService();
     boolean pideParar;
     private Button buttonCreateA, buttonSendMessage, buttonStop;
     static final long serialVersionUID = 0;
-    public Interface() {
+    public Vista() {
         super("Actors");
         this.setSize(new Dimension(560, 460));
         buttonSendMessage = new Button("Send a message");
@@ -49,11 +46,11 @@ public class Interface extends JFrame {
             int i;
             JLabel estadist;
             JProgressBar barra;
+            RingActor actor;
             if(nActors==0){
-                nActors++;
                 JPanel panelAct = new JPanel();
                 barra = new JProgressBar();
-                nameActor = new JLabel("Actor "+nActors);
+                nameActor = new JLabel("Actor "+1);
                 estadist = new JLabel("nº messages processed: ");
                 panelAct.setLayout(new GridLayout(0,3));
                 panelAct.add(barra);
@@ -64,23 +61,27 @@ public class Interface extends JFrame {
 
                 JProgressBar barra2;
                 JLabel estadist2;
-                nActors++;
+
                 JPanel panelAct2 = new JPanel();
                 barra2 = new JProgressBar();
-                nameActor = new JLabel("Actor "+nActors);
+                nameActor = new JLabel("Actor "+2);
                 estadist2 = new JLabel("nº messages processed: ");
                 panelAct2.setLayout(new GridLayout(0,3));
                 panelAct2.add(barra2);
                 panelAct2.add(nameActor);
                 panelAct2.add(estadist2);
                 panel.add(panelAct2);
-                addActors(barra,estadist,barra2,estadist2);
+                List<Actor> aux = control.addActors();
+
+                new ThreadCarga(aux.get(0),barra,estadist).start();
+                nActors=2;
+                new ThreadCarga(aux.get(1),barra2,estadist2).start();
+
 
             }else{
                 nActors++;
                 JPanel panelAct = new JPanel();
                 barra = new JProgressBar();
-                //iniciaCuenta();
                 nameActor = new JLabel("Actor "+nActors);
                 estadist = new JLabel("nº messages processed: ");
                 panelAct.setLayout(new GridLayout(0,3));
@@ -88,7 +89,8 @@ public class Interface extends JFrame {
                 panelAct.add(nameActor);
                 panelAct.add(estadist);
                 panel.add(panelAct);
-                addActor(barra,estadist);
+                actor=control.addActor();
+                new ThreadCarga(actor, barra, estadist).start();
             }
 
 
@@ -101,7 +103,7 @@ public class Interface extends JFrame {
         static final long serialVersionUID = 0;
         @Override
         public void actionPerformed(ActionEvent e) {
-            ring.sendMessageToRing(new Message("hola"));
+            control.enviarMissatge();
         }
     };
 
@@ -113,22 +115,6 @@ public class Interface extends JFrame {
         }
     };
 
-    public void addActors(JProgressBar bar1, JLabel label1, JProgressBar bar2, JLabel label2 ){
-            RingActor ini = new RingActor();
-            RingActor end = new RingActor();
-            ring=new Ring(ini,end);
-            new ThreadCarga(ini,bar1,label1).start();
-            new ThreadCarga(end,bar2,label2).start();
-    }
-
-    public void addActor(JProgressBar bar, JLabel label){
-        RingActor actor = new RingActor();
-        ring.addActor(actor);
-        new ThreadCarga(actor,bar,label).start();
-    }
-    // iniciate bar
-
-
     // End bar
     public void detieneCuenta() {
         synchronized( objeto ) {
@@ -139,33 +125,29 @@ public class Interface extends JFrame {
 
     // thread to control the bar (Actor thread)
     class ThreadCarga extends Thread {
-        RingActor actor;
+        Actor actor;
         JProgressBar bar;
         JLabel label;
         int nMess=0;
-        public ThreadCarga(RingActor act, JProgressBar barra, JLabel estad){
+        public ThreadCarga(Actor act, JProgressBar barra, JLabel estad){
+            control.monitor(act);
             this.actor=act;
-            monitor.monitorActor(actor);
             this.bar=barra;
             label=estad;
         }
         public void run() {
             int mesSended = 0;
             int max = 100;
-
             bar.setValue( mesSended );
             bar.setMinimum( mesSended );
             bar.setMaximum( max );
             List<Message> a = new ArrayList<>();
             while(true){
-                a=(List) monitor.getSentMessages().get(actor);
-                mesSended=a.size();
-                bar.setValue( mesSended );
-                a=(List) monitor.getRecivedMessages().get(actor);
-                max=a.size();
+                mesSended=control.getnMessages(actor,0);
+                max=control.getnMessages(actor,1);
+                bar.setValue(mesSended);
                 bar.setMaximum(max);
                 label.setText("nº messages processed: "+mesSended+"/"+max);
-
                 try {
                     sleep(100);
                 } catch (InterruptedException e) {

@@ -1,10 +1,10 @@
 import actors.ActorContext;
-import framework.Interface;
+import framework.Vista;
 
 public class InterfaceApp {
     public static void main(String[] args) {
         ActorContext actorContext = ActorContext.getInstance();
-        Interface window = new Interface();
+        Vista window = new Vista();
         window.setVisible(true);
     }
 }

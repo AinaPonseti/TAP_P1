@@ -5,7 +5,6 @@ import actors.*;
 import decorators.EncryptionDecorator;
 import decorators.FirewallDecorator;
 import decorators.LambdaFirewallDecorator;
-import framework.Interface;
 import messages.*;
 import java.util.function.Predicate;
 
