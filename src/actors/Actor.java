@@ -12,7 +12,7 @@ public abstract class Actor {
     protected BlockingQueue<Message> messageQueue;
     protected String name;
     public Subject monitor;
-    
+
     /**
      * Constructor for the Actor class, initializes the messageQueue
      */
@@ -37,16 +37,15 @@ public abstract class Actor {
      */
     public synchronized void process() {
         boolean running = true;
-
         while (running) {
             try {
-                Message message = messageQueue.take();
+                Message message = dequeueMessage();
                 if (message instanceof QuitMessage) {
                     running = false;
                     monitor.notify(0, null);
                 } else {
                     monitor.notify(2, message);
-                    onMessageReceived(message);
+                    this.onMessageReceived(message);
                 }
             }
             catch (InterruptedException e){
@@ -56,6 +55,11 @@ public abstract class Actor {
         }
 
     }
+
+    public Message dequeueMessage() throws InterruptedException{
+        return messageQueue.take();
+    }
+
 
     /**
      * Method onMessageReceived: handles the message

@@ -122,9 +122,9 @@ public class app {
 		helloActor.send(new QuitMessage());
 
 		System.out.println("Creating an EncryptionDecorator for a helloWorldActor...");
-		ActorProxy encryptionDecorator = ActorContext.spawnActor(new EncryptionDecorator(new HelloWorldActor("encryptionDecorator")));
+		ActorProxy encryptionDecorator = ActorContext.spawnActor(new EncryptionDecorator(new FirewallDecorator(new HelloWorldActor("encryptionDecorator"))));
 		System.out.println("Sending HelloWorld message...");
-		encryptionDecorator.send(new Message(helloActor, "Hello World from the EncryptionDecorator!"));
+		encryptionDecorator.send(new Message(firewallDecorator.getActor(), "Hello World from the EncryptionDecorator!"));
 
 		System.out.println("Waiting for the message to arrive...");
 		try {

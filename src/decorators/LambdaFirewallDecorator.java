@@ -32,7 +32,7 @@ public class LambdaFirewallDecorator extends ActorDecorator {
                 filterList.add(((AddClosureMessage) message).getPredicate());
             }
             else{
-                messageQueue.add(message);
+                decoratedActor.send(message);
             }
         }
     }

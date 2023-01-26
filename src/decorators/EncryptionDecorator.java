@@ -34,7 +34,7 @@ public class EncryptionDecorator extends ActorDecorator {
         if (message.getText() != null){
             encryptMessage(message);
         }
-        messageQueue.add(message);
+        this.decoratedActor.send(message);
     }
 
     /**
