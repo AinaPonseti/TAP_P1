@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import observer.*;
 import reflection.DynamicProxy;
 import reflection.InsultService;
+import reflection.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -144,7 +145,7 @@ public class app {
 		//dynamicProxy demonstration
 		System.out.println(" ------------------- DYNAMIC PROXY -------------------");
 		insult = ActorContext.spawnActor(new InsultActor("insultActor"));
-		InsultService insulter = DynamicProxy.intercept(new InsultService(), insult);
+		InsultService insulter = (InsultService) DynamicProxy.intercept(new InsultService(), insult);
 		System.out.println("Adding 'stupid'...");
 		insulter.addInsult("stupid");
 		System.out.println("Adding 'idiot'...");
