@@ -78,6 +78,9 @@ public class InsultService implements Service{
 
     @Override
     public void setActor(Actor actor) {
+        if (actor instanceof ActorProxy){
+            setInsultActor((ActorProxy) actor);
+        }
         this.setInsultActor(new ActorProxy(actor));
     }
 }

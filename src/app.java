@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import observer.*;
 import reflection.DynamicProxy;
+import reflection.HelloService;
 import reflection.InsultService;
 import reflection.Service;
 
@@ -137,13 +138,13 @@ public class app {
 		System.out.println("Done.\n");
 
 		encryptionDecorator.send(new QuitMessage());
-		helloActor.send(new QuitMessage());
 		firewallDecorator.send(new QuitMessage());
 		lambdaFirewallDecorator.send(new QuitMessage());
 
 
 		//dynamicProxy demonstration
 		System.out.println(" ------------------- DYNAMIC PROXY -------------------");
+		System.out.println("Initializing the insultService...");
 		insult = ActorContext.spawnActor(new InsultActor("insultActor"));
 		InsultService insulter = (InsultService) DynamicProxy.intercept(new InsultService(), insult);
 		System.out.println("Adding 'stupid'...");
@@ -159,6 +160,20 @@ public class app {
 		System.out.println(insulter.getInsult());
 		System.out.println("Done.\n");
 
+		System.out.println("Initializing the helloWorldService...");
+		helloActor = ActorContext.spawnActor(new HelloWorldActor("helloActor"));
+		HelloService helloService = (HelloService) DynamicProxy.intercept(new HelloService(), helloActor);
+		helloService.print("Hello from the helloService!");
+		helloService.print("Hello from the helloService!");
+		helloService.print("Hello from the helloService!");
+		System.out.println("Waiting for the messages to arrive...");
+		try {
+			sleep(500);
+		} catch (InterruptedException e) {
+			System.out.println(e);
+		}
+		System.out.println("Done.\n");
+
 
 		//reflection demonstration
 		//System.out.println(" ------------------- REFLECTION -------------------");
@@ -169,6 +184,7 @@ public class app {
 		//reflectiveActor.send(new GetInsultMessage());
 
 		insult.send(new QuitMessage());
+		helloActor.send(new QuitMessage());
 
 		// actor observer pattern
 		System.out.println(" ------------------- OBSERVER -------------------");
