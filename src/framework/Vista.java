@@ -46,7 +46,7 @@ public class Vista extends JFrame {
             int i;
             JLabel estadist;
             JProgressBar barra;
-            RingActor actor;
+            String idActor;
             if(nActors==0){
                 JPanel panelAct = new JPanel();
                 barra = new JProgressBar();
@@ -71,7 +71,7 @@ public class Vista extends JFrame {
                 panelAct2.add(nameActor);
                 panelAct2.add(estadist2);
                 panel.add(panelAct2);
-                List<Actor> aux = control.addActors();
+                List<String> aux = control.addActors();
 
                 new ThreadCarga(aux.get(0),barra,estadist).start();
                 nActors=2;
@@ -89,8 +89,8 @@ public class Vista extends JFrame {
                 panelAct.add(nameActor);
                 panelAct.add(estadist);
                 panel.add(panelAct);
-                actor=control.addActor();
-                new ThreadCarga(actor, barra, estadist).start();
+                idActor=control.addActor(nActors);
+                new ThreadCarga(idActor, barra, estadist).start();
             }
 
 
@@ -125,13 +125,13 @@ public class Vista extends JFrame {
 
     // thread to control the bar (Actor thread)
     class ThreadCarga extends Thread {
-        Actor actor;
+        String idActor;
         JProgressBar bar;
         JLabel label;
         int nMess=0;
-        public ThreadCarga(Actor act, JProgressBar barra, JLabel estad){
-            control.monitor(act);
-            this.actor=act;
+        public ThreadCarga(String idAct, JProgressBar barra, JLabel estad){
+            control.monitor(idAct);
+            this.idActor=idAct;
             this.bar=barra;
             label=estad;
         }
@@ -143,8 +143,8 @@ public class Vista extends JFrame {
             bar.setMaximum( max );
             List<Message> a = new ArrayList<>();
             while(true){
-                mesSended=control.getnMessages(actor,0);
-                max=control.getnMessages(actor,1);
+                mesSended=control.getnMessages(idActor,0);
+                max=control.getnMessages(idActor,1);
                 bar.setValue(mesSended);
                 bar.setMaximum(max);
                 label.setText("nº messages processed: "+mesSended+"/"+max);
