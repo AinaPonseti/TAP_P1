@@ -8,16 +8,22 @@ public abstract class ActorDecorator extends Actor {
 
     /**
      * Constructor for the decorator
+     *
      * @param actor actor to decorate
      */
-    public ActorDecorator(Actor actor){
+    public ActorDecorator(Actor actor) {
         super(actor.getName());
-        this.decoratedActor = actor;
+        decoratedActor = actor;
     }
 
     @Override
-    public void send(Message message){
-        messageQueue.add(message);
+    public void send(Message message) {
+        decoratedActor.send(message);
+    }
+
+    @Override
+    public Message dequeueMessage() throws InterruptedException {
+        return decoratedActor.dequeueMessage();
     }
 
     @Override

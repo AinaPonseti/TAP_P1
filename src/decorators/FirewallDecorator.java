@@ -16,7 +16,7 @@ public class FirewallDecorator extends ActorDecorator {
     @Override
     public void send(Message message) {
         if (checkIfValid(message) || message instanceof QuitMessage) {
-            messageQueue.add(message);
+            decoratedActor.send(message);
         }
     }
 

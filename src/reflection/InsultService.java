@@ -1,5 +1,6 @@
 package reflection;
 
+import actors.Actor;
 import actors.ActorProxy;
 import messages.AddInsultMessage;
 import messages.GetAllInsultsMessage;
@@ -10,7 +11,7 @@ import messages.Message;
  * InsultService Class
  * Implements methods to communicate with the actor
  */
-public class InsultService implements InsultServiceInt{
+public class InsultService implements Service{
 
     private ActorProxy insultActor;
 
@@ -73,5 +74,13 @@ public class InsultService implements InsultServiceInt{
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void setActor(Actor actor) {
+        if (actor instanceof ActorProxy){
+            setInsultActor((ActorProxy) actor);
+        }
+        this.setInsultActor(new ActorProxy(actor));
     }
 }
