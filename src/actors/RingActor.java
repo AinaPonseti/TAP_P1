@@ -13,6 +13,9 @@ public class RingActor extends Actor {
     public RingActor() {
         super("Ring");
     }
+    public RingActor(int i) {
+        super("Ring"+i);
+    }
     public RingActor(RingActor actor, int nMesaj){
         super("Ring");
         this.nextActor=actor;
